@@ -3,11 +3,15 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v3
+
       - name: "GHA pipeline test."
         run: |
           echo "Just testing my first GitHub Action pipeline."
