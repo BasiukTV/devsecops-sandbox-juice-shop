@@ -1,0 +1,13 @@
+name: "CI Pipeline"
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "GHA pipeline test."
+        run: |
+          echo "Just testing my first GitHub Action pipeline."
