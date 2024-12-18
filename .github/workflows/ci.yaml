@@ -20,5 +20,15 @@ jobs:
       - name: "Build Docker image"
         run: docker build -t ${{ env.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.run_id }} .
 
+      - name: "Start Workflow Summary"
+        run: echo '## Docker Scout Scan Results' >> $GITHUB_STEP_SUMMARY
+
+      - name: Docker Scout Scan
+        uses: docker/scout-action@v1.16.1
+        with:
+          command: quickview,cves,recommendations
+          only-severities: critical,high
+          exit-code: true # Fails the whole job if the vulnerabilities are found
+
       - name: "Push Docker image"
         run: docker push ${{ env.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.run_id }}
