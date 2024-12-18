@@ -12,6 +12,5 @@ jobs:
       - name: "Checkout repository"
         uses: actions/checkout@v3
 
-      - name: "GHA pipeline test."
-        run: |
-          echo "Just testing my first GitHub Action pipeline."
+      - name: "Build Docker image"
+        run: docker build -t jouci-shop:latest .
