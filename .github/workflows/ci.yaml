@@ -7,10 +7,18 @@ on:
 
 jobs:
   docker:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    env:
+      DOCKER_HUB_USERNAME: tbeit
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v3
 
       - name: "Build Docker image"
-        run: docker build -t jouci-shop:latest .
+        run: docker build -t juice-shop:${{ github.run_id }} .
+
+      - name: "Login to Docker Hub"
+        run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ env.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: "Push Docker image"
+        run: docker push juice-shop:${{ github.run_id }}
