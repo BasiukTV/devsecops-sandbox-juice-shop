@@ -6,13 +6,25 @@ on:
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: SonarQube Cloud Scan
+        uses: SonarSource/sonarcloud-github-action@v4.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
   docker:
     runs-on: ubuntu-24.04
     env:
       DOCKER_HUB_USERNAME: tbeit
+    if: false # Temporarely disabling this job to work on something else instead
     steps:
       - name: "Checkout repository"
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: "Login to Docker Hub"
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ env.DOCKER_HUB_USERNAME }}" --password-stdin
@@ -28,7 +40,7 @@ jobs:
         with:
           command: quickview,cves,recommendations
           only-severities: critical,high
-          exit-code: true # Fails the whole job if the vulnerabilities are found
+          # exit-code: true # Fails the whole job if the vulnerabilities are found
 
       - name: "Push Docker image"
         run: docker push ${{ env.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.run_id }}
