@@ -16,6 +16,10 @@ jobs:
         uses: SonarSource/sonarcloud-github-action@v4.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=basiuktv
+            -Dsonar.projectKey=BasiukTV_devsecops-sandbox-juice-shop
 
   docker:
     runs-on: ubuntu-24.04
