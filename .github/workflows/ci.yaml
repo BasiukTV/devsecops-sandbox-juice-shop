@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       DOCKER_HUB_USERNAME: tbeit
-    if: false # Temporarely disabling this job to work on something else instead
+    # if: false # Temporarely disabling this job to work on something else instead
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
