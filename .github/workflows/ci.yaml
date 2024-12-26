@@ -65,8 +65,8 @@ jobs:
 
       - name: "Install Terraform"
         uses: hashicorp/setup-terraform@v3
-          with:
-            cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
 
       # Will check Terraform Configuration Formatting
       # (any output of terraform fmt will be considered an error)
