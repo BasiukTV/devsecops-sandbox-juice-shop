@@ -42,13 +42,13 @@ module "counting" {
   }
 }
 
-# resource "azurerm_storage_account" "sa" {
-# name = module.naming.storage_account.name
-#  resource_group_name = azurerm_resource_group.test.name
-#  location = var.location
+resource "azurerm_storage_account" "sa" {
+  name = module.naming.storage_account.name
+  resource_group_name = azurerm_resource_group.test.name
+  location = var.location
 
-#  account_tier = "Standard"
-#  account_replication_type = "LRS"
+  account_tier = "Standard"
+  account_replication_type = "LRS"
 
-#  min_tls_version = "TLS1_1"
-#}
+  min_tls_version = "TLS1_1"
+}
