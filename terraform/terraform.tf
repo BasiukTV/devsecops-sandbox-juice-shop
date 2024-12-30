@@ -9,5 +9,10 @@ terraform {
 
   cloud {
     organization = "taras-clp"
+
+    # Below value is passed as an environment TF_WORKSPACE variable
+    # workspaces {
+    #  name = "test"
+    # }
   }
 }
