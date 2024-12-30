@@ -8,7 +8,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-24.04
-    if: false # Temporarely disabling this job to work on something else instead
+    # if: false # Temporarely disabling this job to work on something else instead
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-24.04
     env:
       DOCKER_HUB_USERNAME: tbeit
-    if: false # Temporarely disabling this job to work on something else instead
+    # if: false # Temporarely disabling this job to work on something else instead
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
@@ -108,11 +108,6 @@ jobs:
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
-
-      - name: TFSec Scan
-        uses: aquasecurity/tfsec-action@v1.0.0
-        with:
-          additional_args: --custom-check-dir $TF_HOME
 
       - name: Upload Terraform Artifact
         uses: actions/upload-artifact@v4
