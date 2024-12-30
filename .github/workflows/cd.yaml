@@ -11,12 +11,30 @@ jobs:
   dev:
     runs-on: ubuntu-24.04
     # if: false # Temporarely disabling this job to work on something else instead
-    steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
+    env:
+      TF_WORKSPACE: test
+      DOCKER_HUB_USERNAME: tbeit
 
-      - name: "Deploy to Dev"
-        run: echo "Deploying to Dev environment"
+      # Below value will be picked up by the Terraform script
+      TF_VAR_docker_image: ${{ env.DOCKER_HUB_USERNAME }}/juice-shop:12419828744 # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
+    steps:
+      - name: "Download CI Terraform artifacts"
+        uses: actions/download-artifact@v2
+        with:
+          name: terraform
+
+      - name: "Install Terraform"
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: "Terraform Provision Resources"
+        run: |
+          cd $GITHUB_WORKSPACE/terraform
+          terraform workspace select $TF_WORKSPACE
+          terraform init
+          terraform apply -auto-approve
+          cd -
 
   prod:
     needs: dev
