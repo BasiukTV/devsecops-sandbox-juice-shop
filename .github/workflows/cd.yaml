@@ -18,7 +18,7 @@ jobs:
       TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:12419828744 # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
     steps:
       - name: "Download CI Terraform artifacts"
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: terraform
 
