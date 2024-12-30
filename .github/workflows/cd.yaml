@@ -1,0 +1,30 @@
+name: "20 CD Pipeline"
+on:
+  # TODO manual workflow dispatch requires additional configuration
+  # workflow_dispatch:  # Allows manual triggering of the workflow
+  workflow_run:
+    workflows: ["10 CI Pipeline"] # Run CD pipeline after CI is successful
+    types:
+      - completed
+
+jobs:
+  dev:
+    runs-on: ubuntu-24.04
+    # if: false # Temporarely disabling this job to work on something else instead
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "Deploy to Dev"
+        run: echo "Deploying to Dev environment"
+
+  prod:
+    needs: dev
+    runs-on: ubuntu-24.04
+    # if: false # Temporarely disabling this job to work on something else instead
+    steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
+      - name: "Deploy to Prod"
+        run: echo "Deploying to Prod environment"
