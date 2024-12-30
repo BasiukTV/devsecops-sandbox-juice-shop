@@ -27,7 +27,7 @@ module "counting" {
         name   = "juice-shop"
         memory = "0.5Gi"
         cpu    = 0.25
-        image  = "tbeit/juice-shop:12419828744"
+        image  = var.docker_image
       },
     ]
   }

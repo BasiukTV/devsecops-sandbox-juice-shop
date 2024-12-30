@@ -115,5 +115,5 @@ jobs:
           name: terraform
           # Upload all .tf and .tfvars file in the terraform home, except .terraform directory
           path: |
-            ${{env.TF_HOME}}/*.tf*
+            ${{env.TF_HOME}}/**/*.tf*
             !${{env.TF_HOME}}/.terraform

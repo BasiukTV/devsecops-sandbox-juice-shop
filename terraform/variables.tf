@@ -12,3 +12,8 @@ variable "location" {
   description = "The Azure region to deploy resources"
   default     = "eastus"
 }
+
+variable "docker_image" {
+  description = "The Docker image to deploy."
+  default     = "tbeit/juice-shop:12419828744"
+}

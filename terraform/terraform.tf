@@ -9,9 +9,5 @@ terraform {
 
   cloud {
     organization = "taras-clp"
-
-    workspaces {
-      name = "test"
-    }
   }
 }
