@@ -18,7 +18,7 @@ jobs:
       TF_WORKSPACE: test # This hardcodes the Terraform workspace to be used
 
       # Below value will be picked up by the Terraform script
-      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:12419828744 # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
+      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:latest # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
@@ -39,9 +39,23 @@ jobs:
     needs: dev
     runs-on: ubuntu-24.04
     # if: false # Temporarely disabling this job to work on something else instead
+    env:
+      TF_WORKSPACE: prod # This hardcodes the Terraform workspace to be used
+
+      # Below value will be picked up by the Terraform script
+      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:latest # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
     steps:
       - name: "Checkout repository"
         uses: actions/checkout@v4
 
-      - name: "Deploy to Prod"
-        run: echo "Deploying to Prod environment"
+      - name: "Install Terraform"
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: "Terraform Provision Resources"
+        run: |
+          cd $TF_HOME
+          terraform init
+          terraform apply -var-file="values/prod.tfvars" -auto-approve
+          cd -
