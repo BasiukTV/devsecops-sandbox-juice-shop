@@ -1,2 +1,2 @@
-environment=test
-location=eastus
+environment = "test"
+location = "eastus"

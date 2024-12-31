@@ -1,2 +1,2 @@
-environment=prod
-location=westus3
+environment="prod"
+location="westus3"
