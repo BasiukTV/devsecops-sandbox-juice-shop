@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
     # if: false # Temporarely disabling this job to work on something else instead
     env:
-      TF_WORKSPACE: test
+      TF_WORKSPACE: test # This hardcodes the Terraform workspace to be used
 
       # Below value will be picked up by the Terraform script
       TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:12419828744 # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
@@ -31,7 +31,6 @@ jobs:
       - name: "Terraform Provision Resources"
         run: |
           cd $TF_HOME
-          terraform workspace select $TF_WORKSPACE
           terraform init
           terraform apply -var-file="values/test.tfvars" -auto-approve
           cd -
