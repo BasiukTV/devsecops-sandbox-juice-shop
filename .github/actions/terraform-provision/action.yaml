@@ -1,0 +1,25 @@
+
+name: "Terraform Provision"
+description: "Checkout, install Terraform, and provision resources"
+inputs:
+  varfile:
+    description: "Path to Terraform var file"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Checkout repository"
+      uses: actions/checkout@v4
+
+    - name: "Install Terraform"
+      uses: hashicorp/setup-terraform@v3
+      with:
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - name: "Terraform Provision Resources"
+      run: |
+        cd $TF_HOME
+        terraform init
+        terraform apply -var-file="${{ inputs.varfile }}" -auto-approve
+        cd -

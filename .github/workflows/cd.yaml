@@ -1,11 +1,11 @@
 name: "20 CD Pipeline"
 on:
-  # TODO manual workflow dispatch requires additional configuration
-  # workflow_dispatch:  # Allows manual triggering of the workflow
-  workflow_run:
-    workflows: ["10 CI Pipeline"] # Run CD pipeline after CI is successful
-    types:
-      - completed
+  workflow_dispatch:
+    inputs:
+      dockerImageTag:
+        description: "Docker image tag to deploy"
+        required: true
+
 
 env:
   TF_HOME: ${{ github.workspace }}/terraform
@@ -18,22 +18,12 @@ jobs:
       TF_WORKSPACE: test # This hardcodes the Terraform workspace to be used
 
       # Below value will be picked up by the Terraform script
-      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:latest # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
+      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.event.inputs.dockerImageTag }}
     steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
-
-      - name: "Install Terraform"
-        uses: hashicorp/setup-terraform@v3
+      - name: "Use custom Terraform provision action"
+        uses: ./.github/actions/terraform-provision
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: "Terraform Provision Resources"
-        run: |
-          cd $TF_HOME
-          terraform init
-          terraform apply -var-file="values/test.tfvars" -auto-approve
-          cd -
+          varfile: "values/test.tfvars"
 
   prod:
     needs: dev
@@ -43,19 +33,9 @@ jobs:
       TF_WORKSPACE: prod # This hardcodes the Terraform workspace to be used
 
       # Below value will be picked up by the Terraform script
-      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:latest # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
+      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.event.inputs.dockerImageTag }}
     steps:
-      - name: "Checkout repository"
-        uses: actions/checkout@v4
-
-      - name: "Install Terraform"
-        uses: hashicorp/setup-terraform@v3
+      - name: "Use custom Terraform provision action"
+        uses: ./.github/actions/terraform-provision
         with:
-          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
-
-      - name: "Terraform Provision Resources"
-        run: |
-          cd $TF_HOME
-          terraform init
-          terraform apply -var-file="values/prod.tfvars" -auto-approve
-          cd -
+          varfile: "values/prod.tfvars"

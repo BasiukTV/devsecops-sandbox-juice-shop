@@ -117,3 +117,21 @@ jobs:
           path: |
             ${{env.TF_HOME}}/**/*.tf*
             !${{env.TF_HOME}}/.terraform
+
+  trigger-cd:
+    runs-on: ubuntu-24.04
+    needs: [test, docker, terraform]
+    steps:
+      - name: "Trigger CD pipeline"
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: "cd.yaml",
+              ref: "master",
+              inputs: {
+                dockerImageTag: "${{ github.run_id }}"
+              }
+            })
