@@ -7,6 +7,9 @@ on:
     types:
       - completed
 
+env:
+  TF_HOME: ${{ github.workspace }}/terraform
+
 jobs:
   dev:
     runs-on: ubuntu-24.04
@@ -17,11 +20,8 @@ jobs:
       # Below value will be picked up by the Terraform script
       TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:12419828744 # TODO Put this back once the CD pipeline overall works ${{ github.run_id }}
     steps:
-      - name: "Download CI Terraform artifacts"
-        uses: actions/download-artifact@v4
-        with:
-          name: terraform
-          run-id: ${{ github.event.workflow_run.id }}
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
 
       - name: "Install Terraform"
         uses: hashicorp/setup-terraform@v3
@@ -30,7 +30,7 @@ jobs:
 
       - name: "Terraform Provision Resources"
         run: |
-          cd $GITHUB_WORKSPACE/terraform
+          cd $TF_HOME
           terraform workspace select $TF_WORKSPACE
           terraform init
           terraform apply -var-file="values/test.tfvars" -auto-approve
