@@ -6,7 +6,7 @@ on:
   workflow_dispatch:  # Allows manual triggering of the workflow
 
 jobs:
-  test:
+  sast:
     runs-on: ubuntu-24.04
     # if: false # Temporarely disabling this job to work on something else instead
     steps:
@@ -120,7 +120,7 @@ jobs:
 
   trigger-cd:
     runs-on: ubuntu-24.04
-    needs: [test, docker, terraform]
+    needs: [sast, docker, terraform]
     steps:
       - name: "Trigger CD pipeline"
         uses: actions/github-script@v6
@@ -132,6 +132,6 @@ jobs:
               workflow_id: "cd.yaml",
               ref: "master",
               inputs: {
-                dockerImageTag: "${{ github.run_id }}"
+                ci_run_id: "${{ github.run_id }}"
               }
             })

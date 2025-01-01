@@ -2,40 +2,38 @@ name: "20 CD Pipeline"
 on:
   workflow_dispatch:
     inputs:
-      dockerImageTag:
-        description: "Docker image tag to deploy"
+      ci_run_id:
+        description: "Run ID of the CI pipeline run to reference the Docker image and Terraform artifacts."
         required: true
 
-
-env:
-  TF_HOME: ${{ github.workspace }}/terraform
-
 jobs:
-  dev:
+  test:
     runs-on: ubuntu-24.04
     # if: false # Temporarely disabling this job to work on something else instead
-    env:
-      TF_WORKSPACE: test # This hardcodes the Terraform workspace to be used
-
-      # Below value will be picked up by the Terraform script
-      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.event.inputs.dockerImageTag }}
     steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
       - name: "Use custom Terraform provision action"
         uses: ./.github/actions/terraform-provision
         with:
+          tf_api_token: ${{ secrets.TF_API_TOKEN }}
+          workspace: test
           varfile: "values/test.tfvars"
+          docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.event.inputs.ci_run_id }}
 
   prod:
-    needs: dev
     runs-on: ubuntu-24.04
+    needs: test
     # if: false # Temporarely disabling this job to work on something else instead
-    env:
-      TF_WORKSPACE: prod # This hardcodes the Terraform workspace to be used
-
-      # Below value will be picked up by the Terraform script
-      TF_VAR_docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.event.inputs.dockerImageTag }}
     steps:
+      - name: "Checkout repository"
+        uses: actions/checkout@v4
+
       - name: "Use custom Terraform provision action"
         uses: ./.github/actions/terraform-provision
         with:
+          tf_api_token: ${{ secrets.TF_API_TOKEN }}
+          workspace: prod
           varfile: "values/prod.tfvars"
+          docker_image: ${{ vars.DOCKER_HUB_USERNAME }}/juice-shop:${{ github.event.inputs.ci_run_id }}

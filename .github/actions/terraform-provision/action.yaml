@@ -1,25 +1,32 @@
-
 name: "Terraform Provision"
 description: "Checkout, install Terraform, and provision resources"
 inputs:
+  tf_api_token:
+    description: "Terraform Cloud API token."
+    required: true
+  workspace:
+    description: "Terraform cloud workspace to be used."
+    required: true
   varfile:
-    description: "Path to Terraform var file"
+    description: "Path to Terraform var file."
+    required: true
+  docker_image:
+    description: "Docker image to be deployed with Azure Container Apps via Terraform."
     required: true
 
 runs:
   using: "composite"
   steps:
-    - name: "Checkout repository"
-      uses: actions/checkout@v4
-
     - name: "Install Terraform"
       uses: hashicorp/setup-terraform@v3
       with:
-        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+        cli_config_credentials_token: ${{ inputs.tf_api_token }}
 
     - name: "Terraform Provision Resources"
+      shell: bash
       run: |
-        cd $TF_HOME
+        cd ./terraform
+        export TF_WORKSPACE="${{ inputs.workspace }}"
         terraform init
-        terraform apply -var-file="${{ inputs.varfile }}" -auto-approve
+        terraform apply -var-file="${{ inputs.varfile }}" -var="docker_image=${{ inputs.docker_image }}" -auto-approve
         cd -
